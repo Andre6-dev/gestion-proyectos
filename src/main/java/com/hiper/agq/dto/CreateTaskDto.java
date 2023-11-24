@@ -7,11 +7,12 @@ import com.hiper.agq.entity.enums.TypeTask;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * DTO for {@link com.hiper.agq.entity.Task}
  */
-public record CreateTaskDto(String name, String description, TaskStatus status, PriorityEnum priority, TypeTask type,
+public record CreateTaskDto(UUID id, String name, String description, TaskStatus status, PriorityEnum priority, TypeTask type,
                             LocalDateTime startDate, LocalDateTime endDate, String estimatedTime,
                             Project project) implements Serializable {
 }

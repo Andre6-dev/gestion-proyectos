@@ -10,12 +10,17 @@ import com.hiper.agq.dto.mapper.CreateTaskMapper;
 import com.hiper.agq.entity.Project;
 import com.hiper.agq.entity.Task;
 import com.hiper.agq.entity.User;
+import com.hiper.agq.entity.enums.PriorityEnum;
+import com.hiper.agq.entity.enums.TaskStatus;
+import com.hiper.agq.entity.enums.TypeTask;
 import com.hiper.agq.exception.common.ResourceNotFoundException;
+import com.hiper.agq.utils.UpdateHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -125,60 +130,66 @@ public class TaskService {
         taskDAO.deleteTaskById(taskId);
     }
 
-    public CreateTaskDto updateTask(UUID taskId, CreateTaskDto createTaskDto) {
+    public CreateTaskDto updateTask(UUID taskId, UUID userId, UUID projectId, CreateTaskDto updateTaskDto) {
         log.info("Updating task with id [{}]", taskId);
 
-        Task task = createTaskMapper.toEntity(createTaskDto);
+        Task task = taskDAO.selectTaskById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task with id [%s] not found".formatted(taskId)));
 
-        //
-        boolean changes = false;
+        Project project = projectDAO.selectProjectById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Project with id [%s] not found".formatted(projectId)));
 
-        if (createTaskDto.name() != null && !createTaskDto.name().equals(task.getName())) {
-            task.setName(createTaskDto.name());
-            changes = true;
-        }
+        User user = userDAO.selectUserById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id [%s] not found".formatted(userId)));
 
-        if (createTaskDto.description() != null && !createTaskDto.description().equals(task.getDescription())) {
-            task.setDescription(createTaskDto.description());
-            changes = true;
-        }
+        validation(updateTaskDto, task, project);
 
-        if (createTaskDto.status() != null && !createTaskDto.status().equals(task.getStatus())) {
-            task.setStatus(createTaskDto.status());
-            changes = true;
-        }
+        // Assign user to task
+        task.assignUserToTask(user);
 
-        if (createTaskDto.priority() != null && !createTaskDto.priority().equals(task.getPriority())) {
-            task.setPriority(createTaskDto.priority());
-            changes = true;
-        }
-
-        if (createTaskDto.type() != null && !createTaskDto.type().equals(task.getType())) {
-            task.setType(createTaskDto.type());
-            changes = true;
-        }
-
-        if (createTaskDto.startDate() != null && !createTaskDto.startDate().equals(task.getStartDate())) {
-            task.setStartDate(createTaskDto.startDate());
-            changes = true;
-        }
-
-        if (createTaskDto.endDate() != null && !createTaskDto.endDate().equals(task.getEndDate())) {
-            task.setEndDate(createTaskDto.endDate());
-            changes = true;
-        }
-
-        if (createTaskDto.estimatedTime() != null && !createTaskDto.estimatedTime().equals(task.getEstimatedTime())) {
-            task.setEstimatedTime(createTaskDto.estimatedTime());
-            changes = true;
-        }
-
-        if (!changes) {
-            throw new RuntimeException("No changes were made");
-        }
+        // Assign task to Project
+        task.setProject(project);
 
         return createTaskMapper.toDto(taskDAO.updateTask(task));
 
+    }
+
+    private static void validation(CreateTaskDto updateTaskDto, Task task, Project project) {
+        if (Objects.nonNull(updateTaskDto.name()) && !updateTaskDto.name().equals(task.getName())) {
+            task.setName(updateTaskDto.name());
+        }
+
+        if (Objects.nonNull(updateTaskDto.description()) && !updateTaskDto.description().equals(task.getDescription())) {
+            task.setDescription(updateTaskDto.description());
+        }
+
+        if (Objects.nonNull(updateTaskDto.status()) && !updateTaskDto.status().equals(task.getStatus())) {
+            task.setStatus(TaskStatus.valueOf(updateTaskDto.status().toString()));
+        }
+
+        if (Objects.nonNull(updateTaskDto.priority()) && !updateTaskDto.priority().equals(task.getPriority())) {
+            task.setPriority(PriorityEnum.valueOf(updateTaskDto.priority().toString()));
+        }
+
+        if (Objects.nonNull(updateTaskDto.type()) && !updateTaskDto.type().equals(task.getType())) {
+            task.setType(TypeTask.valueOf(updateTaskDto.type().toString()));
+        }
+
+        if (Objects.nonNull(updateTaskDto.startDate()) && !updateTaskDto.startDate().equals(task.getStartDate())) {
+            task.setStartDate(updateTaskDto.startDate());
+        }
+
+        if (Objects.nonNull(updateTaskDto.endDate()) && !updateTaskDto.endDate().equals(task.getEndDate())) {
+            task.setEndDate(updateTaskDto.endDate());
+        }
+
+        if (Objects.nonNull(updateTaskDto.estimatedTime()) && !updateTaskDto.estimatedTime().equals(task.getEstimatedTime())) {
+            task.setEstimatedTime(updateTaskDto.estimatedTime());
+        }
+
+        if (Objects.nonNull(updateTaskDto.project()) && !updateTaskDto.project().equals(task.getProject())) {
+            task.setProject(project);
+        }
     }
 
 }

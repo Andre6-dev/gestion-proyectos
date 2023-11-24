@@ -3,6 +3,7 @@ package com.hiper.agq.controller;
 import com.hiper.agq.controller.common.ResponseHandler;
 import com.hiper.agq.dto.UserDto;
 import com.hiper.agq.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import static com.hiper.agq.utils.Constants.API_BASE_PATH;
 /**
  * andre on 23/11/2023
  */
+@Tag(name = "User", description = "User API")
 @RestController
 @RequestMapping(API_BASE_PATH + "users")
 public class UserController {

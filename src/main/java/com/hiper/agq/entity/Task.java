@@ -78,12 +78,12 @@ public class Task extends AbstractEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status && priority == task.priority && type == task.type && Objects.equals(startDate, task.startDate) && Objects.equals(endDate, task.endDate) && Objects.equals(estimatedTime, task.estimatedTime);
+        return Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status && priority == task.priority && type == task.type && Objects.equals(startDate, task.startDate) && Objects.equals(endDate, task.endDate) && Objects.equals(estimatedTime, task.estimatedTime) && Objects.equals(project, task.project);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, status, priority, type, startDate, endDate, estimatedTime);
+        return Objects.hash(name, description, status, priority, type, startDate, endDate, estimatedTime, project);
     }
 
     public void assignUserToTask(User user) {

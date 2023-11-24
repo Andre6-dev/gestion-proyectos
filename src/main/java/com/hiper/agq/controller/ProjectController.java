@@ -2,6 +2,7 @@ package com.hiper.agq.controller;
 
 
 import com.hiper.agq.controller.common.ResponseHandler;
+import com.hiper.agq.dto.AllProjectDto;
 import com.hiper.agq.dto.ProjectDto;
 import com.hiper.agq.entity.enums.TypeProject;
 import com.hiper.agq.service.ProjectService;
@@ -44,7 +45,7 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createProject(@RequestBody ProjectDto project) {
+    public ResponseEntity<Object> createProject(@RequestBody AllProjectDto project) {
         return ResponseHandler.response(HttpStatus.OK, projectService.createProject(project), true);
     }
 
@@ -55,7 +56,7 @@ public class ProjectController {
     }
 
     @PutMapping("/{projectId}")
-    public ResponseEntity<Object> updateProject(@PathVariable("projectId") UUID projectId, @RequestBody ProjectDto project) {
+    public ResponseEntity<Object> updateProject(@PathVariable("projectId") UUID projectId, @RequestBody AllProjectDto project) {
         return ResponseHandler.response(HttpStatus.OK, projectService.updateProject(projectId, project), true);
     }
 

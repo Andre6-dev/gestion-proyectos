@@ -4,12 +4,16 @@ import com.hiper.agq.dao.UserDAO;
 import com.hiper.agq.dto.UserDto;
 import com.hiper.agq.dto.mapper.UserMapper;
 import com.hiper.agq.entity.User;
+import com.hiper.agq.entity.enums.TypeUser;
+import com.hiper.agq.exception.common.RequestValidationException;
 import com.hiper.agq.exception.common.ResourceNotFoundException;
+import com.hiper.agq.utils.UpdateHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -51,9 +55,6 @@ public class UserService {
 
         User newUser = userDAO.insertUser(userMapper.toEntity(userDto));
 
-        // Create a new UUID for the user
-        newUser.setId(UUID.randomUUID());
-
         return userMapper.toDto(newUser);
     }
 
@@ -71,35 +72,16 @@ public class UserService {
         User user = userDAO.selectUserById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id [%s] not found".formatted(id)));
 
-        boolean changes = false;
+        boolean changes =
+                UpdateHelper.updateField(userDto.fullName(), user.getFullName(),user::setFullName) ||
+                UpdateHelper.updateField(userDto.email(), user.getEmail(),user::setEmail) ||
+                UpdateHelper.updateEnumField(Objects.requireNonNull(userDto.typeUser()).toString(), user.getTypeUser(), TypeUser::valueOf, user::setTypeUser) ||
+                UpdateHelper.updateField(userDto.mobilePhone(), user.getMobilePhone(),user::setMobilePhone) ||
+                UpdateHelper.updateField(userDto.profilePicture(), user.getProfilePicture(),user::setProfilePicture);
 
-        if (userDto.fullName() != null && !userDto.fullName().equals(user.getFullName())) {
-            user.setFullName(userDto.fullName());
-            changes = true;
-        }
-
-        if (userDto.email() != null && !userDto.email().equals(user.getEmail())) {
-            user.setEmail(userDto.email());
-            changes = true;
-        }
-
-        if (userDto.typeUser() != null && !userDto.typeUser().equals(user.getTypeUser())) {
-            user.setTypeUser(userDto.typeUser());
-            changes = true;
-        }
-
-        if (userDto.mobilePhone() != null && !userDto.mobilePhone().equals(user.getMobilePhone())) {
-            user.setMobilePhone(userDto.mobilePhone());
-            changes = true;
-        }
-
-        if (userDto.profilePicture() != null && !userDto.profilePicture().equals(user.getProfilePicture())) {
-            user.setProfilePicture(userDto.profilePicture());
-            changes = true;
-        }
 
         if (!changes) {
-            throw new RuntimeException("No changes were made");
+            throw new RequestValidationException("No changes were made");
         }
 
         return userMapper.toDto(userDAO.updateUser(user));

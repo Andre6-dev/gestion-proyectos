@@ -4,6 +4,7 @@ import com.hiper.agq.controller.common.ResponseHandler;
 import com.hiper.agq.dto.AllTaskDto;
 import com.hiper.agq.dto.CreateTaskDto;
 import com.hiper.agq.service.TaskService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import static com.hiper.agq.utils.Constants.API_BASE_PATH;
 /**
  * andre on 23/11/2023
  */
+@Tag(name = "Task", description = "Task API")
 @RestController
 @RequestMapping(API_BASE_PATH + "tasks")
 public class TaskController {
@@ -28,6 +30,11 @@ public class TaskController {
     @GetMapping
     public ResponseEntity<Object> getAllTasks() {
         return ResponseHandler.response(HttpStatus.OK, taskService.getAllTasks(), true);
+    }
+
+    @GetMapping("/{taskId}")
+    public ResponseEntity<Object> getTaskById(@PathVariable("taskId") UUID taskId) {
+        return ResponseHandler.response(HttpStatus.OK, taskService.getTaskById(taskId), true);
     }
 
     @GetMapping("/project/{projectId}")
@@ -56,9 +63,9 @@ public class TaskController {
         return ResponseHandler.response(HttpStatus.OK, "Task deleted successfully", true);
     }
 
-    @PutMapping("/{taskId}")
-    public ResponseEntity<Object> updateTask(@PathVariable("taskId") UUID taskId, @RequestBody CreateTaskDto task) {
-        return ResponseHandler.response(HttpStatus.OK, taskService.updateTask(taskId, task), true);
+    @PutMapping("/{taskId}/user/{userId}")
+    public ResponseEntity<Object> updateTask(@PathVariable("taskId") UUID taskId, @PathVariable("userId") UUID userId, @RequestParam("projectId") UUID projectId, @RequestBody CreateTaskDto task) {
+        return ResponseHandler.response(HttpStatus.OK, taskService.updateTask(taskId, userId, projectId, task), true);
     }
 
 }
