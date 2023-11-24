@@ -1,5 +1,6 @@
 package com.hiper.agq.utils;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -7,15 +8,7 @@ import java.util.function.Function;
  * andre on 24/11/2023
  */
 public class UpdateHelper {
-
-    /*public static boolean updateField(Object newValue, Object currentValue, Consumer<String> updater) {
-        if (newValue != null && !newValue.equals(currentValue)) {
-            updater.accept(newValue.toString());
-            return true;
-        }
-        return false;
-    }*/
-
+    
     public static <T> boolean updateField(T newValue, T currentValue, Consumer<T> updater) {
         if (newValue != null && !newValue.equals(currentValue)) {
             updater.accept(newValue);

@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * andre on 23/11/2023
@@ -142,7 +144,7 @@ public class TaskService {
         User user = userDAO.selectUserById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id [%s] not found".formatted(userId)));
 
-        validation(updateTaskDto, task, project);
+        updateTaskFromDto(task, updateTaskDto, project);
 
         // Assign user to task
         task.assignUserToTask(user);
@@ -154,41 +156,34 @@ public class TaskService {
 
     }
 
-    private static void validation(CreateTaskDto updateTaskDto, Task task, Project project) {
-        if (Objects.nonNull(updateTaskDto.name()) && !updateTaskDto.name().equals(task.getName())) {
-            task.setName(updateTaskDto.name());
-        }
+    public void updateTaskFromDto(Task task, CreateTaskDto updateTaskDto, Project project) {
+        updateFieldIfNotNull(updateTaskDto.name(), task.getName(), task::setName);
+        updateFieldIfNotNull(updateTaskDto.description(), task.getDescription(), task::setDescription);
+        updateFieldIfNotNullEnum(updateTaskDto.status().toString(), task.getStatus(), TaskStatus::valueOf, task::setStatus);
+        updateFieldIfNotNullEnum(updateTaskDto.priority().toString(), task.getPriority(), PriorityEnum::valueOf, task::setPriority);
+        updateFieldIfNotNullEnum(updateTaskDto.type().toString(), task.getType(), TypeTask::valueOf, task::setType);
+        updateFieldIfNotNull(updateTaskDto.startDate(), task.getStartDate(), task::setStartDate);
+        updateFieldIfNotNull(updateTaskDto.endDate(), task.getEndDate(), task::setEndDate);
+        updateFieldIfNotNull(updateTaskDto.estimatedTime(), task.getEstimatedTime(), task::setEstimatedTime);
+        updateFieldIfNotNull(project, task.getProject(), task::setProject);
+    }
 
-        if (Objects.nonNull(updateTaskDto.description()) && !updateTaskDto.description().equals(task.getDescription())) {
-            task.setDescription(updateTaskDto.description());
+    private <T> void updateFieldIfNotNull(T newValue, T currentValue, Consumer<T> updater) {
+        if (Objects.nonNull(newValue) && !newValue.equals(currentValue)) {
+            updater.accept(newValue);
         }
+    }
 
-        if (Objects.nonNull(updateTaskDto.status()) && !updateTaskDto.status().equals(task.getStatus())) {
-            task.setStatus(TaskStatus.valueOf(updateTaskDto.status().toString()));
-        }
-
-        if (Objects.nonNull(updateTaskDto.priority()) && !updateTaskDto.priority().equals(task.getPriority())) {
-            task.setPriority(PriorityEnum.valueOf(updateTaskDto.priority().toString()));
-        }
-
-        if (Objects.nonNull(updateTaskDto.type()) && !updateTaskDto.type().equals(task.getType())) {
-            task.setType(TypeTask.valueOf(updateTaskDto.type().toString()));
-        }
-
-        if (Objects.nonNull(updateTaskDto.startDate()) && !updateTaskDto.startDate().equals(task.getStartDate())) {
-            task.setStartDate(updateTaskDto.startDate());
-        }
-
-        if (Objects.nonNull(updateTaskDto.endDate()) && !updateTaskDto.endDate().equals(task.getEndDate())) {
-            task.setEndDate(updateTaskDto.endDate());
-        }
-
-        if (Objects.nonNull(updateTaskDto.estimatedTime()) && !updateTaskDto.estimatedTime().equals(task.getEstimatedTime())) {
-            task.setEstimatedTime(updateTaskDto.estimatedTime());
-        }
-
-        if (Objects.nonNull(updateTaskDto.project()) && !updateTaskDto.project().equals(task.getProject())) {
-            task.setProject(project);
+    private <E extends Enum<E>> void updateFieldIfNotNullEnum(
+            String newValue,
+            E currentValue,
+            Function<String, E> valueOfFunction,
+            Consumer<E> updater) {
+        if (Objects.nonNull(newValue)) {
+            E newEnum = valueOfFunction.apply(newValue);
+            if (!newEnum.equals(currentValue)) {
+                updater.accept(newEnum);
+            }
         }
     }
 
