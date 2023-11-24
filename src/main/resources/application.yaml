@@ -17,3 +17,8 @@ spring:
     properties:
       hibernate.format_sql: true
       hibernate.show_sql: true
+
+devandre:
+  openapi:
+    dev-url: http://localhost:8080
+    prod-url: https://bezkoder-api.com
