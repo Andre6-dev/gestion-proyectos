@@ -30,12 +30,15 @@ public class Task extends AbstractEntity {
     @Column(name = "descripcion_tarea", nullable = false)
     private String description;
 
+    @Column(name = "estado_tarea", nullable = false)
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
 
+    @Column(name = "prioridad_tarea", nullable = false)
     @Enumerated(EnumType.STRING)
     private PriorityEnum priority;
 
+    @Column(name = "tipo_tarea", nullable = false)
     @Enumerated(EnumType.STRING)
     private TypeTask type;
 

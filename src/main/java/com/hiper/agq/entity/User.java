@@ -24,9 +24,10 @@ public class User extends AbstractEntity {
     @Column(name = "nombre_usuario", nullable = false)
     private String fullName;
 
-    @Column(name = "nombre_usuario", nullable = false, unique = true)
+    @Column(name = "correo", nullable = false, unique = true)
     private String email;
 
+    @Column(name = "tipo_usuario", nullable = false)
     @Enumerated(EnumType.STRING)
     private TypeUser typeUser;
 

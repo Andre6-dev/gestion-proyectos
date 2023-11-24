@@ -26,6 +26,7 @@ public class Project extends AbstractEntity {
     @Column(name = "descripcion_proyecto", nullable = false)
     private String description;
 
+    @Column(name = "tipo_proyecto", nullable = false)
     @Enumerated(EnumType.STRING)
     private TypeProject type;
 
