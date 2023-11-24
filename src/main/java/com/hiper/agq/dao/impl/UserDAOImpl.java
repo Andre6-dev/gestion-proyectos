@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * andre on 23/11/2023
@@ -20,31 +21,31 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public List<User> selectAllUsers() {
-        return null;
+        return userRepository.findAll();
     }
 
     @Override
-    public Optional<User> selectUserById(Long roleId) {
-        return Optional.empty();
+    public Optional<User> selectUserById(UUID roleId) {
+        return userRepository.findById(roleId);
     }
 
     @Override
     public User insertUser(User user) {
-        return null;
+        return userRepository.save(user);
     }
 
     @Override
-    public boolean existsUserWithId(Long id) {
-        return false;
+    public boolean existsUserWithId(UUID id) {
+        return userRepository.existsUserById(id);
     }
 
     @Override
-    public void deleteUserById(Long id) {
-
+    public void deleteUserById(UUID id) {
+        userRepository.deleteById(id);
     }
 
     @Override
     public User updateUser(User user) {
-        return null;
+        return userRepository.save(user);
     }
 }
