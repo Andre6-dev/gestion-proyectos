@@ -30,6 +30,11 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
+    public List<User> selectUserByTaskId(UUID taskId) {
+        return userRepository.findAllByTasksId(taskId);
+    }
+
+    @Override
     public User insertUser(User user) {
         return userRepository.save(user);
     }

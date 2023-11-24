@@ -8,7 +8,7 @@ import java.util.function.Function;
  * andre on 24/11/2023
  */
 public class UpdateHelper {
-    
+
     public static <T> boolean updateField(T newValue, T currentValue, Consumer<T> updater) {
         if (newValue != null && !newValue.equals(currentValue)) {
             updater.accept(newValue);

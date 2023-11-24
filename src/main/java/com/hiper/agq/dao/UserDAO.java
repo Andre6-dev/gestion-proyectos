@@ -12,6 +12,8 @@ public interface UserDAO {
 
     Optional<User> selectUserById(UUID roleId);
 
+    List<User> selectUserByTaskId(UUID taskId);
+
     User insertUser(User user);
 
     boolean existsUserWithId(UUID id);

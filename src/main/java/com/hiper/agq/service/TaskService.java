@@ -7,6 +7,7 @@ import com.hiper.agq.dto.AllTaskDto;
 import com.hiper.agq.dto.CreateTaskDto;
 import com.hiper.agq.dto.mapper.AllTaskMapper;
 import com.hiper.agq.dto.mapper.CreateTaskMapper;
+import com.hiper.agq.dto.mapper.UserMapper;
 import com.hiper.agq.entity.Project;
 import com.hiper.agq.entity.Task;
 import com.hiper.agq.entity.User;
@@ -14,7 +15,6 @@ import com.hiper.agq.entity.enums.PriorityEnum;
 import com.hiper.agq.entity.enums.TaskStatus;
 import com.hiper.agq.entity.enums.TypeTask;
 import com.hiper.agq.exception.common.ResourceNotFoundException;
-import com.hiper.agq.utils.UpdateHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -40,13 +40,16 @@ public class TaskService {
 
     private final UserDAO userDAO;
 
+    private final UserMapper userMapper;
+
     private final ProjectDAO projectDAO;
 
-    public TaskService(@Qualifier("taskDAO") TaskDAO taskDAO, AllTaskMapper allTaskMapper, CreateTaskMapper createTaskMapper, UserDAO userDAO, ProjectDAO projectDAO) {
+    public TaskService(@Qualifier("taskDAO") TaskDAO taskDAO, AllTaskMapper allTaskMapper, CreateTaskMapper createTaskMapper, UserDAO userDAO, UserMapper userMapper, ProjectDAO projectDAO) {
         this.taskDAO = taskDAO;
         this.allTaskMapper = allTaskMapper;
         this.createTaskMapper = createTaskMapper;
         this.userDAO = userDAO;
+        this.userMapper = userMapper;
         this.projectDAO = projectDAO;
     }
 
@@ -121,13 +124,15 @@ public class TaskService {
         }
 
         // Remove user from task
-        User user = userDAO.selectUserById(taskId)
-                .orElseThrow(() -> new ResourceNotFoundException("User with task id [%s] not found".formatted(taskId)));
+        List<User> users = userDAO.selectUserByTaskId(taskId);
 
         Task task = taskDAO.selectTaskById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task with id [%s] not found".formatted(taskId)));
 
-        task.removeUserFromTask(user);
+        // Iterate users and remove task from user
+        for (User user : users) {
+            task.removeUserFromTask(user);
+        }
 
         taskDAO.deleteTaskById(taskId);
     }
