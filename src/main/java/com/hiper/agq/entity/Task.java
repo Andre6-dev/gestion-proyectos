@@ -1,5 +1,6 @@
 package com.hiper.agq.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hiper.agq.entity.enums.PriorityEnum;
 import com.hiper.agq.entity.enums.TaskStatus;
 import com.hiper.agq.entity.enums.TypeTask;
@@ -53,6 +54,7 @@ public class Task extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "proyecto_id", nullable = false)
+    @JsonIgnore
     @ToString.Exclude
     private Project project;
 

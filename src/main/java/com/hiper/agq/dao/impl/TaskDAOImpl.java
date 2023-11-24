@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * andre on 23/11/2023
@@ -19,41 +21,46 @@ public class TaskDAOImpl implements TaskDAO {
 
     @Override
     public List<Task> selectAllTasks() {
-        return null;
+        return taskRepository.findAll();
     }
 
     @Override
-    public List<Task> selectTasksByProjectId(Long projectId) {
-        return null;
+    public Optional<Task> selectTaskById(UUID id) {
+        return taskRepository.findById(id);
     }
 
     @Override
-    public List<Task> selectTasksByUserId(Long userId) {
-        return null;
+    public List<Task> selectTasksByProjectId(UUID projectId) {
+        return taskRepository.findByProject_Id(projectId);
     }
 
     @Override
-    public List<Task> selectTasksByProjectIdAndUserId(Long projectId, Long userId) {
-        return null;
+    public List<Task> selectTasksByUserId(UUID userId) {
+        return taskRepository.findByUsers_Id(userId);
+    }
+
+    @Override
+    public List<Task> selectTasksByProjectIdAndUserId(UUID projectId, UUID userId) {
+        return taskRepository.findByProject_IdAndUsers_Id(projectId, userId);
     }
 
     @Override
     public Task insertTask(Task task) {
-        return null;
+        return taskRepository.save(task);
     }
 
     @Override
-    public boolean existsTaskWithId(Long id) {
-        return false;
+    public boolean existsTaskWithId(UUID id) {
+        return taskRepository.existsTaskById(id);
     }
 
     @Override
-    public void deleteTaskById(Long id) {
-
+    public void deleteTaskById(UUID id) {
+        taskRepository.deleteById(id);
     }
 
     @Override
     public Task updateTask(Task task) {
-        return null;
+        return taskRepository.save(task);
     }
 }
