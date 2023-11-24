@@ -27,7 +27,7 @@ public class Task extends AbstractEntity {
     @Column(name = "nombre_tarea", nullable = false)
     private String name;
 
-    @Column(name = "descripcion_tarea", nullable = false)
+    @Column(name = "descripcion_tarea")
     private String description;
 
     @Column(name = "estado_tarea", nullable = false)

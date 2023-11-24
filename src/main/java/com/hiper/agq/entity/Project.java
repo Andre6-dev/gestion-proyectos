@@ -23,7 +23,7 @@ public class Project extends AbstractEntity {
     @Column(name = "nombre_proyecto", nullable = false)
     private String name;
 
-    @Column(name = "descripcion_proyecto", nullable = false)
+    @Column(name = "descripcion_proyecto")
     private String description;
 
     @Column(name = "tipo_proyecto", nullable = false)
