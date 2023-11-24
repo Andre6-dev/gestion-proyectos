@@ -5,6 +5,7 @@ import com.hiper.agq.dto.AllTaskDto;
 import com.hiper.agq.dto.CreateTaskDto;
 import com.hiper.agq.service.TaskService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,7 +54,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createTask(@RequestParam("projectId") UUID projectId, @RequestParam("userId") UUID userId, @RequestBody CreateTaskDto task) {
+    public ResponseEntity<Object> createTask(@RequestParam("projectId") UUID projectId, @RequestParam("userId") UUID userId, @RequestBody @Valid CreateTaskDto task) {
         return ResponseHandler.response(HttpStatus.OK, taskService.createTask(projectId, userId, task), true);
     }
 
@@ -64,7 +65,7 @@ public class TaskController {
     }
 
     @PutMapping("/{taskId}/user/{userId}")
-    public ResponseEntity<Object> updateTask(@PathVariable("taskId") UUID taskId, @PathVariable("userId") UUID userId, @RequestParam("projectId") UUID projectId, @RequestBody CreateTaskDto task) {
+    public ResponseEntity<Object> updateTask(@PathVariable("taskId") UUID taskId, @PathVariable("userId") UUID userId, @RequestParam("projectId") UUID projectId, @RequestBody @Valid CreateTaskDto task) {
         return ResponseHandler.response(HttpStatus.OK, taskService.updateTask(taskId, userId, projectId, task), true);
     }
 

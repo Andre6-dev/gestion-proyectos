@@ -7,6 +7,7 @@ import com.hiper.agq.dto.ProjectDto;
 import com.hiper.agq.entity.enums.TypeProject;
 import com.hiper.agq.service.ProjectService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,7 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createProject(@RequestBody AllProjectDto project) {
+    public ResponseEntity<Object> createProject(@RequestBody @Valid AllProjectDto project) {
         return ResponseHandler.response(HttpStatus.OK, projectService.createProject(project), true);
     }
 
@@ -56,7 +57,7 @@ public class ProjectController {
     }
 
     @PutMapping("/{projectId}")
-    public ResponseEntity<Object> updateProject(@PathVariable("projectId") UUID projectId, @RequestBody AllProjectDto project) {
+    public ResponseEntity<Object> updateProject(@PathVariable("projectId") UUID projectId, @RequestBody @Valid AllProjectDto project) {
         return ResponseHandler.response(HttpStatus.OK, projectService.updateProject(projectId, project), true);
     }
 

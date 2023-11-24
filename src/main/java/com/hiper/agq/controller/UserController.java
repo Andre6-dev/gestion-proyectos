@@ -4,6 +4,7 @@ import com.hiper.agq.controller.common.ResponseHandler;
 import com.hiper.agq.dto.UserDto;
 import com.hiper.agq.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createUser(@RequestBody UserDto user) {
+    public ResponseEntity<Object> createUser(@RequestBody @Valid UserDto user) {
         return ResponseHandler.response(HttpStatus.OK, userService.createUser(user), true);
     }
 
@@ -48,7 +49,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<Object> updateUser(@PathVariable("userId") UUID userId, @RequestBody UserDto user) {
+    public ResponseEntity<Object> updateUser(@PathVariable("userId") UUID userId, @RequestBody @Valid UserDto user) {
         return ResponseHandler.response(HttpStatus.OK, userService.updateUser(userId, user), true);
     }
 }
